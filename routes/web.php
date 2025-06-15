@@ -1,37 +1,29 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Shop\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-// Use aliases to distinguish between your two controllers
-use App\Http\Controllers\Shop\CategoryController as ShopCategoryController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
-Route::get('/', [ShopCategoryController::class, 'get_category_data'])->name('home');
+Route::get('/', [HomeController::class,'get_home_data'])->name('home');
 
-// Fixed the duplicate route name for the detail page
-Route::get('/detail', function () {
-    return Inertia::render('product-details');
-})->name('product.details');
+
+Route::get('/products/{slug}', [HomeController::class,'show_detail'])->name('detail');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard/index');
     })->name('dashboard');
 
-    Route::get('dashboard/homebanner', function () {
-        return Inertia::render('dashboard/homebanner/index');
-    })->name('homebanner');
 
-    Route::get('dashboard/products', function () {
-        return Inertia::render('dashboard/products/index');
-    })->name('products');
-    
-    Route::get('dashboard/categories', function () {
-        return Inertia::render('dashboard/categories/index');
-    })->name('dashboard.categories.index');
-    
-    // CORRECTED ROUTE: This now points to the Admin controller and the 'store' method.
-    Route::post('/dashboard/categories', [AdminCategoryController::class, 'store'])->name('dashboard.categories.store');
+    Route::get('/dashboard/products',[ProductController::class,'list_products'] )->name('dashboard.products.index');
+    Route::post('/dashboard/products',[ProductController::class,'save_product'] )->name('dashboard.products.save');
+
+
+    Route::get('/dashboard/categories',[CategoryController::class,'list_categories'] )->name('dashboard.categories.index');
+    Route::post('/dashboard/categories', [CategoryController::class,'save_category'])->name('dashboard.categories.save');
 });
 
 require __DIR__.'/settings.php';

@@ -1,137 +1,435 @@
-'use client';
+// import { CategoryItem } from '@/types/categories';
+// import { Link } from '@inertiajs/react';
+// import { ChevronLeft, ChevronRight } from 'lucide-react';
+// import React, { useEffect, useRef, useState } from 'react';
 
-import { Button as ShadcnButton } from '@/components/ui/button'; // Renamed to avoid conflict
-import { cn } from '@/lib/utils';
-import { CategoryItemData } from '@/types/categories';
+// export default function ShopCategories({ categories }: { categories: CategoryItem[] }) {
+//     const [activeIndex, setActiveIndex] = useState(0);
+//     const [sliding, setSliding] = useState(false);
+//     const [visibleItems, setVisibleItems] = useState(6);
+//     const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
+//     const [touchStart, setTouchStart] = useState(0);
+//     const [touchEnd, setTouchEnd] = useState(0);
+//     const carouselRef = useRef<HTMLDivElement>(null);
+//     const [isVisible, setIsVisible] = useState(false);
+
+//     // Animation on mount
+//     useEffect(() => {
+//         setIsVisible(true);
+//     }, []);
+
+//     // Premium categories data
+//     // const categories: CategoryItem[] = [
+//     //     {
+//     //         id: 1,
+//     //         name: 'Beauty & Fragrance',
+//     //         slug: 'beauty-fragrance',
+//     //         image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-amber-50',
+//     //     },
+//     //     {
+//     //         id: 2,
+//     //         name: 'Electronics',
+//     //         slug: 'electronics',
+//     //         image: 'https://images.unsplash.com/photo-166202691159-5558e9949346?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-gray-100',
+//     //     },
+//     //     {
+//     //         id: 3,
+//     //         name: 'Health & Personal',
+//     //         slug: 'health-personal',
+//     //         image: 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-sky-50',
+//     //     },
+//     //     {
+//     //         id: 4,
+//     //         name: "Men's Fashion",
+//     //         slug: 'mens-fashion',
+//     //         image: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-blue-50',
+//     //     },
+//     //     {
+//     //         id: 5,
+//     //         name: 'Sports & Outdoors',
+//     //         slug: 'sports-outdoors',
+//     //         image: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-purple-50',
+//     //     },
+//     //     {
+//     //         id: 6,
+//     //         name: "Women's Fashion",
+//     //         slug: 'womens-fashion',
+//     //         image: 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-indigo-50',
+//     //     },
+//     //     {
+//     //         id: 7,
+//     //         name: 'Automotive',
+//     //         slug: 'automotive',
+//     //         image: 'https://images.unsplash.com/photo-1504215680853-026ed2a45def?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-blue-50',
+//     //     },
+//     //     {
+//     //         id: 8,
+//     //         name: 'Health & Nutrition',
+//     //         slug: 'health-nutrition',
+//     //         image: 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-sky-50',
+//     //     },
+//     //     {
+//     //         id: 9,
+//     //         name: 'Kids Fashion',
+//     //         slug: 'kids-fashion',
+//     //         image: 'https://images.unsplash.com/photo-1543854608-fbb5c5c8a307?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-violet-50',
+//     //     },
+//     //     {
+//     //         id: 10,
+//     //         name: 'Refurbished Department',
+//     //         slug: 'refurbished',
+//     //         image: 'https://images.unsplash.com/photo-1603706585128-8d096bea0021?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-blue-50',
+//     //     },
+//     //     {
+//     //         id: 11,
+//     //         name: 'Stationary, Books & Media',
+//     //         slug: 'stationary-books-media',
+//     //         image: 'https://images.unsplash.com/photo-1599204606395-ede983886ce9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-amber-50',
+//     //     },
+//     //     {
+//     //         id: 12,
+//     //         name: 'Baby',
+//     //         slug: 'baby',
+//     //         image: 'https://images.unsplash.com/photo-1586683086816-c674f6bb3c69?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+//     //         color: 'bg-teal-50',
+//     //     },
+//     // ];
+
+//     // Calculate visible items based on screen size
+//     useEffect(() => {
+//         const handleResize = () => {
+//             if (window.innerWidth < 640) {
+//                 setVisibleItems(3);
+//             } else if (window.innerWidth < 768) {
+//                 setVisibleItems(4);
+//             } else if (window.innerWidth < 1024) {
+//                 setVisibleItems(5);
+//             } else if (window.innerWidth < 1280) {
+//                 setVisibleItems(6);
+//             } else {
+//                 setVisibleItems(8);
+//             }
+//         };
+
+//         handleResize();
+//         window.addEventListener('resize', handleResize);
+//         return () => window.removeEventListener('resize', handleResize);
+//     }, []);
+
+//     // Calculate maximum pages
+//     const totalPages = Math.ceil(categories.length / visibleItems);
+//     const maxIndex = totalPages - 1;
+
+//     // Navigation functions
+//     const goToNext = () => {
+//         if (sliding) return;
+//         setSliding(true);
+//         setActiveIndex((current) => (current === maxIndex ? 0 : current + 1));
+//         setTimeout(() => setSliding(false), 500);
+//     };
+
+//     const goToPrev = () => {
+//         if (sliding) return;
+//         setSliding(true);
+//         setActiveIndex((current) => (current === 0 ? maxIndex : current - 1));
+//         setTimeout(() => setSliding(false), 500);
+//     };
+
+//     const goToPage = (index: number) => {
+//         if (sliding || index === activeIndex) return;
+//         setSliding(true);
+//         setActiveIndex(index);
+//         setTimeout(() => setSliding(false), 500);
+//     };
+
+//     // Touch handlers for mobile swipe
+//     const handleTouchStart = (e: React.TouchEvent) => {
+//         setTouchStart(e.targetTouches[0].clientX);
+//     };
+
+//     const handleTouchMove = (e: React.TouchEvent) => {
+//         setTouchEnd(e.targetTouches[0].clientX);
+//     };
+
+//     const handleTouchEnd = () => {
+//         if (!touchStart || !touchEnd) return;
+//         const distance = touchStart - touchEnd;
+//         const isLeftSwipe = distance > 50;
+//         const isRightSwipe = distance < -50;
+
+//         if (isLeftSwipe) {
+//             goToNext();
+//         }
+//         if (isRightSwipe) {
+//             goToPrev();
+//         }
+
+//         setTouchStart(0);
+//         setTouchEnd(0);
+//     };
+
+//     // Calculate visible categories based on active index
+//     const visibleCategories = () => {
+//         const startIdx = activeIndex * visibleItems;
+//         return categories.slice(startIdx, startIdx + visibleItems);
+//     };
+
+//     return (
+//         <div className="relative w-full overflow-hidden rounded-2xl border-y border-amber-100/50 bg-gradient-to-b from-amber-50/70 to-amber-50/30 px-4 py-8 md:px-8">
+//             <div className="mx-auto max-w-7xl">
+//                 {/* Decorative elements */}
+//                 <div className="absolute top-0 left-0 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-200/20 blur-3xl"></div>
+//                 <div className="absolute right-0 bottom-0 h-40 w-40 translate-x-1/3 translate-y-1/3 rounded-full bg-amber-300/10 blur-3xl"></div>
+
+//                 <div className={`mb-8 flex items-center justify-between transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+//                     <div>
+//                         <div className="flex items-center">
+//                             <div className="mr-3 h-8 w-1.5 rounded-full bg-amber-500"></div>
+//                             <h2 className="text-xl font-bold text-gray-800 md:text-2xl">Shop by Category</h2>
+//                         </div>
+//                         <p className="mt-1 ml-4 text-sm text-gray-500">Explore our premium collections</p>
+//                     </div>
+
+//                     <div className="flex space-x-3">
+//                         <button
+//                             onClick={goToPrev}
+//                             disabled={sliding}
+//                             className="rounded-full border border-amber-200 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-amber-300 hover:bg-amber-50 active:scale-95 disabled:opacity-50"
+//                             aria-label="Previous categories"
+//                         >
+//                             <ChevronLeft className="h-5 w-5" />
+//                         </button>
+//                         <button
+//                             onClick={goToNext}
+//                             disabled={sliding}
+//                             className="rounded-full border border-amber-200 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-amber-300 hover:bg-amber-50 active:scale-95 disabled:opacity-50"
+//                             aria-label="Next categories"
+//                         >
+//                             <ChevronRight className="h-5 w-5" />
+//                         </button>
+//                     </div>
+//                 </div>
+
+//                 {/* Categories Carousel */}
+//                 <div
+//                     ref={carouselRef}
+//                     className="relative overflow-hidden"
+//                     onTouchStart={handleTouchStart}
+//                     onTouchMove={handleTouchMove}
+//                     onTouchEnd={handleTouchEnd}
+//                 >
+//                     <div
+//                         className={`flex transition-transform duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+//                         style={{
+//                             transform: `translateX(0%)`,
+//                             width: '100%',
+//                             transitionDelay: '0.2s',
+//                         }}
+//                     >
+//                         <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 md:gap-6 lg:grid-cols-6 xl:grid-cols-8">
+//                             {visibleCategories().map((category, idx) => {
+//                                 const imagePath = category.image.startsWith('categories/') ? `/storage/${category.image}` : category.image;
+//                                 return (
+//                                     <Link
+//                                         key={category.id}
+//                                         href={`/category/${category.slug}`}
+//                                         className="group flex flex-col items-center"
+//                                         onMouseEnter={() => setHoveredCategory(category.id)}
+//                                         onMouseLeave={() => setHoveredCategory(null)}
+//                                         style={{
+//                                             transition: 'all 0.5s ease',
+//                                             transitionDelay: `${idx * 0.05}s`,
+//                                         }}
+//                                     >
+//                                         <div
+//                                             className={`aspect-square w-full overflow-hidden rounded-full ${category.color} p-1.5 ${
+//                                                 hoveredCategory === category.id ? 'ring-opacity-50 shadow-md ring-2 ring-amber-300' : 'shadow-sm'
+//                                             } transform transition-all duration-300 ${hoveredCategory === category.id ? 'scale-105' : ''}`}
+//                                         >
+//                                             <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white">
+//                                                 <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10"></div>
+//                                                 <img
+//                                                     src={imagePath}
+//                                                     alt={category.name}
+//                                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+//                                                 />
+//                                             </div>
+//                                         </div>
+//                                         <div className="mt-3 text-center">
+//                                             <h3 className="line-clamp-2 text-xs font-medium text-gray-800 transition-colors group-hover:text-amber-700 sm:text-sm">
+//                                                 {category.name}
+//                                             </h3>
+//                                         </div>
+//                                     </Link>
+//                                 );
+//                             })}
+//                         </div>
+//                     </div>
+//                 </div>
+
+//                 {/* Enhanced Dot Navigation */}
+//                 <div className="mt-8 flex items-center justify-center space-x-3">
+//                     {Array.from({ length: totalPages }).map((_, index) => (
+//                         <button
+//                             key={index}
+//                             onClick={() => goToPage(index)}
+//                             className={`h-2.5 rounded-full transition-all duration-300 ${
+//                                 activeIndex === index
+//                                     ? 'w-10 bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm'
+//                                     : 'w-2.5 bg-gray-200 hover:bg-amber-200'
+//                             }`}
+//                             aria-label={`Go to page ${index + 1}`}
+//                             aria-current={activeIndex === index ? 'true' : 'false'}
+//                         />
+//                     ))}
+//                 </div>
+
+//                 {/* View All Categories Button */}
+//                 <div
+//                     className={`mt-8 flex justify-center transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+//                     style={{ transitionDelay: '0.4s' }}
+//                 >
+//                     <a
+//                         href="/categories"
+//                         className="inline-flex items-center rounded-full border border-amber-200 bg-white px-6 py-2.5 text-amber-700 shadow-sm transition-all hover:scale-105 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800 hover:shadow active:scale-95"
+//                     >
+//                         <span className="font-medium">View All Categories</span>
+//                         <ChevronRight className="ml-1 h-4 w-4" />
+//                     </a>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+// test
+import { CategoryItem } from '@/types/categories';
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-export default function ShopCategories({ categories }: { categories: CategoryItemData[] }) {
+export default function ShopCategories({ categories }: { categories: CategoryItem[] }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [sliding, setSliding] = useState(false);
     const [visibleItems, setVisibleItems] = useState(6);
     const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
     const [touchStart, setTouchStart] = useState(0);
     const [touchEnd, setTouchEnd] = useState(0);
+    const carouselRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
+    // Animation on mount
     useEffect(() => {
         setIsVisible(true);
     }, []);
 
+    // Calculate visible items based on screen size
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) setVisibleItems(3);
-            else if (window.innerWidth < 768) setVisibleItems(4);
-            else if (window.innerWidth < 1024) setVisibleItems(5);
-            else if (window.innerWidth < 1280) setVisibleItems(6);
-            else setVisibleItems(8);
+            if (window.innerWidth < 640) {
+                setVisibleItems(3);
+            } else if (window.innerWidth < 768) {
+                setVisibleItems(4);
+            } else if (window.innerWidth < 1024) {
+                setVisibleItems(5);
+            } else if (window.innerWidth < 1280) {
+                setVisibleItems(6);
+            } else {
+                setVisibleItems(8);
+            }
         };
+
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Calculate maximum pages
     const totalPages = Math.ceil(categories.length / visibleItems);
-    const maxIndex = totalPages > 0 ? totalPages - 1 : 0;
+    const maxIndex = totalPages - 1;
 
-    const goToNext = useCallback(() => {
-        if (sliding || totalPages <= 1) return;
+    // Navigation functions
+    const goToNext = () => {
+        if (sliding) return;
         setSliding(true);
         setActiveIndex((current) => (current === maxIndex ? 0 : current + 1));
         setTimeout(() => setSliding(false), 500);
-    }, [sliding, totalPages, maxIndex]);
+    };
 
-    const goToPrev = useCallback(() => {
-        if (sliding || totalPages <= 1) return;
+    const goToPrev = () => {
+        if (sliding) return;
         setSliding(true);
         setActiveIndex((current) => (current === 0 ? maxIndex : current - 1));
         setTimeout(() => setSliding(false), 500);
-    }, [sliding, totalPages, maxIndex]);
+    };
 
-    const goToPage = useCallback(
-        (index: number) => {
-            if (sliding || index === activeIndex || totalPages <= 1) return;
-            setSliding(true);
-            setActiveIndex(index);
-            setTimeout(() => setSliding(false), 500);
-        },
-        [sliding, activeIndex, totalPages],
-    );
+    const goToPage = (index: number) => {
+        if (sliding || index === activeIndex) return;
+        setSliding(true);
+        setActiveIndex(index);
+        setTimeout(() => setSliding(false), 500);
+    };
 
+    // Touch handlers for mobile swipe
     const handleTouchStart = (e: React.TouchEvent) => {
         setTouchStart(e.targetTouches[0].clientX);
     };
+
     const handleTouchMove = (e: React.TouchEvent) => {
         setTouchEnd(e.targetTouches[0].clientX);
     };
+
     const handleTouchEnd = () => {
-        if (!touchStart || !touchEnd || totalPages <= 1) return;
+        if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
-        if (distance > 50) goToNext();
-        if (distance < -50) goToPrev();
+        const isLeftSwipe = distance > 50;
+        const isRightSwipe = distance < -50;
+
+        if (isLeftSwipe) {
+            goToNext();
+        }
+        if (isRightSwipe) {
+            goToPrev();
+        }
+
         setTouchStart(0);
         setTouchEnd(0);
     };
 
-    const getVisibleCategories = () => {
-        if (categories.length === 0) return [];
+    // Calculate visible categories based on active index
+    const visibleCategories = () => {
         const startIdx = activeIndex * visibleItems;
         return categories.slice(startIdx, startIdx + visibleItems);
     };
 
-    const visibleCategoriesToDisplay = getVisibleCategories();
-
-    const titleColor = 'text-gray-800 dark:text-slate-100';
-    const subtitleColor = 'text-gray-500 dark:text-slate-400';
-    const buttonBg = 'bg-white dark:bg-slate-700';
-    const buttonBorder = 'border-gray-200 dark:border-slate-600'; // Changed from amber to gray
-    const buttonText = 'text-gray-600 dark:text-slate-300';
-    const buttonHoverBg = 'hover:bg-gray-100 dark:hover:bg-slate-600'; // Changed from amber
-    const buttonHoverBorder = 'hover:border-gray-300 dark:hover:border-slate-500'; // Changed from amber
-
-    const categoryNameText = 'text-gray-700 dark:text-slate-200'; // Adjusted for general readability
-    const categoryNameHoverText = 'group-hover:text-orange-600 dark:group-hover:text-orange-400';
-    const categoryInnerBg = 'bg-white dark:bg-slate-700';
-
-    const dotActiveBg = 'bg-orange-500 dark:bg-orange-400'; // Kept orange accent
-    const dotInactiveBg = 'bg-gray-300 dark:bg-slate-600';
-    const dotInactiveHoverBg = 'hover:bg-gray-400 dark:hover:bg-slate-500';
-
-    const viewAllButtonBg = 'bg-white dark:bg-slate-700';
-    const viewAllButtonBorder = 'border-gray-300 dark:border-slate-600'; // Changed from amber
-    const viewAllButtonText = 'text-orange-600 dark:text-orange-400';
-    const viewAllButtonHoverBg = 'hover:bg-gray-100 dark:hover:bg-slate-600';
-    const viewAllButtonHoverText = 'hover:text-orange-700 dark:hover:text-orange-300';
-
     return (
-        <div className="mx-auto w-full max-w-7xl px-4">
-            {' '}
-            <div className={cn('mb-8 flex items-center justify-between transition-opacity duration-1000', isVisible ? 'opacity-100' : 'opacity-0')}>
-                <div>
-                    <div className="flex items-center">
-                        <div className={cn('mr-3 h-8 w-1.5 rounded-full bg-orange-500 dark:bg-orange-400')}></div>
-                        <h2 className={cn('text-xl font-bold md:text-2xl', titleColor)}>Shop by Category</h2>
+        <div className="relative w-full px-4 py-8 md:px-8">
+            <div className="mx-auto max-w-7xl">
+                <div className={`mb-8 flex items-center justify-between transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                    <div>
+                        <div className="flex items-center">
+                            <div className="mr-3 h-8 w-1.5 rounded-full bg-orange-500"></div>
+                            <h2 className="text-xl font-bold text-gray-900 md:text-2xl dark:text-white">Shop by Category</h2>
+                        </div>
+                        <p className="mt-1 ml-4 text-sm text-gray-600 dark:text-gray-400">Explore our premium collections</p>
                     </div>
-                    <p className={cn('mt-1 ml-4 text-sm', subtitleColor)}>Explore our YDL PhoneShop collections</p>
-                </div>
 
-                {totalPages > 1 && (
-                    <div className="flex w-full justify-end space-x-2 sm:space-x-3">
-                        {' '}
-                        {/* Moved nav buttons to right if title is removed from here */}
+                    <div className="flex space-x-3">
                         <button
                             onClick={goToPrev}
                             disabled={sliding}
-                            className={cn(
-                                'rounded-full border bg-orange-500 p-2 shadow-sm transition-all hover:scale-105 active:scale-95 sm:p-2.5',
-                                buttonBg,
-                                buttonBorder,
-                                buttonText,
-                                buttonHoverBg,
-                                buttonHoverBorder,
-                            )}
+                            className="rounded-full border border-orange-500 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 active:scale-95 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-orange-600 dark:hover:bg-orange-900/20"
                             aria-label="Previous categories"
                         >
                             <ChevronLeft className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
@@ -139,114 +437,103 @@ export default function ShopCategories({ categories }: { categories: CategoryIte
                         <button
                             onClick={goToNext}
                             disabled={sliding}
-                            className={cn(
-                                'rounded-full border p-2 shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 sm:p-2.5',
-                                buttonBg,
-                                buttonBorder,
-                                buttonText,
-                                buttonHoverBg,
-                                buttonHoverBorder,
-                            )}
+                            className="rounded-full border border-gray-200 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 active:scale-95 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-orange-600 dark:hover:bg-orange-900/20"
                             aria-label="Next categories"
                         >
                             <ChevronRight className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
                         </button>
                     </div>
-                )}
-            </div>
-            <div className="relative overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+                </div>
+
+                {/* Categories Carousel */}
                 <div
-                    className={cn('flex transition-transform duration-500 ease-in-out', isVisible ? 'opacity-100' : 'opacity-0')}
-                    style={{ transform: `translateX(0%)`, width: '100%', transitionDelay: '0.2s' }}
+                    ref={carouselRef}
+                    className="relative overflow-hidden"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
-                    <div className={cn('grid w-full grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 md:gap-5 lg:grid-cols-6 xl:grid-cols-8')}>
-                        {visibleCategoriesToDisplay.map((category, idx) => (
-                            <Link
-                                key={category.id}
-                                className="group flex flex-col items-center rounded-lg p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:focus-visible:ring-orange-400" // Added padding for focus ring
-                                onMouseEnter={() => setHoveredCategory(category.id)}
-                                onMouseLeave={() => setHoveredCategory(null)}
-                                style={{ transition: 'all 0.5s ease', transitionDelay: `${idx * 0.05}s` }}
-                                href={''}
-                            >
-                                <div
-                                    className={cn(
-                                        'aspect-square w-full transform overflow-hidden rounded-full p-1 transition-all duration-300 sm:p-1.5',
-                                        category.color,
-                                        hoveredCategory === category.id
-                                            ? 'ring-opacity-50 scale-105 shadow-md ring-2 ring-amber-300 dark:ring-orange-500'
-                                            : 'shadow-sm',
-                                    )}
-                                >
-                                    <div
-                                        className={cn(
-                                            'relative flex h-full w-full items-center justify-center overflow-hidden rounded-full',
-                                            categoryInnerBg,
-                                        )}
+                    <div
+                        className={`flex transition-transform duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                        style={{
+                            transform: `translateX(0%)`,
+                            width: '100%',
+                            transitionDelay: '0.2s',
+                        }}
+                    >
+                        <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 md:gap-6 lg:grid-cols-6 xl:grid-cols-8">
+                            {visibleCategories().map((category, idx) => {
+                                const imagePath = category.image.startsWith('categories/') ? `/storage/${category.image}` : category.image;
+                                return (
+                                    <Link
+                                        key={category.id}
+                                        href={`/category/${category.slug}`}
+                                        className="group flex flex-col items-center"
+                                        onMouseEnter={() => setHoveredCategory(category.id)}
+                                        onMouseLeave={() => setHoveredCategory(null)}
+                                        style={{
+                                            transition: 'all 0.5s ease',
+                                            transitionDelay: `${idx * 0.05}s`,
+                                        }}
                                     >
-                                        <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10 dark:to-black/20"></div>
-                                        <img
-                                            src={category.image}
-                                            alt={category.name}
-                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mt-2 text-center sm:mt-3">
-                                    <h3
-                                        className={cn(
-                                            'line-clamp-2 text-xs font-medium transition-colors sm:text-sm',
-                                            categoryNameText,
-                                            categoryNameHoverText,
-                                        )}
-                                    >
-                                        {category.name}
-                                    </h3>
-                                </div>
-                            </Link>
-                        ))}
+                                        <div
+                                            className={`aspect-square w-full overflow-hidden rounded-full ${category.color} p-1.5 dark:bg-gray-700 ${
+                                                hoveredCategory === category.id
+                                                    ? 'ring-opacity-50 shadow-md ring-2 ring-orange-400 dark:ring-orange-500'
+                                                    : 'shadow-sm'
+                                            } transform transition-all duration-300 ${hoveredCategory === category.id ? 'scale-105' : ''}`}
+                                        >
+                                            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white dark:bg-gray-800">
+                                                <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-black/10 dark:from-black/0 dark:via-black/0 dark:to-white/10"></div>
+                                                <img
+                                                    src={imagePath}
+                                                    alt={category.name}
+                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mt-3 text-center">
+                                            <h3 className="line-clamp-2 text-xs font-medium text-gray-800 transition-colors group-hover:text-orange-600 sm:text-sm dark:text-gray-200 dark:group-hover:text-orange-400">
+                                                {category.name}
+                                            </h3>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
-            </div>
-            {totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center space-x-2 sm:space-x-3">
+
+                {/* Enhanced Dot Navigation */}
+                <div className="mt-8 flex items-center justify-center space-x-3">
                     {Array.from({ length: totalPages }).map((_, index) => (
                         <button
                             key={index}
                             onClick={() => goToPage(index)}
-                            className={cn(
-                                `h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 dark:focus-visible:ring-orange-400 dark:focus-visible:ring-offset-current`, // Ensure offset works on current bg
+                            className={`h-2.5 rounded-full transition-all duration-300 ${
                                 activeIndex === index
-                                    ? cn('w-8 sm:w-10', dotActiveBg, 'shadow-sm')
-                                    : cn('w-2 sm:w-2.5', dotInactiveBg, dotInactiveHoverBg),
-                            )}
+                                    ? 'w-10 bg-gradient-to-r from-orange-400 to-orange-500 shadow-sm'
+                                    : 'w-2.5 bg-gray-300 hover:bg-orange-300 dark:bg-gray-600 dark:hover:bg-orange-700'
+                            }`}
                             aria-label={`Go to page ${index + 1}`}
-                            aria-current={activeIndex === index}
+                            aria-current={activeIndex === index ? 'true' : 'false'}
                         />
                     ))}
                 </div>
-            )}
-            <div
-                className={cn('mt-8 flex justify-center transition-opacity duration-1000', isVisible ? 'opacity-100' : 'opacity-0')}
-                style={{ transitionDelay: '0.4s' }}
-            >
-                <ShadcnButton
-                    asChild
-                    variant="outline"
-                    className={cn(
-                        'inline-flex items-center rounded-full px-5 py-2 text-sm shadow-sm transition-all hover:scale-105 hover:shadow active:scale-95 sm:px-6 sm:py-2.5 sm:text-base',
-                        viewAllButtonBg,
-                        viewAllButtonBorder,
-                        viewAllButtonText,
-                        viewAllButtonHoverBg,
-                        viewAllButtonHoverText,
-                    )}
+
+                {/* View All Categories Button */}
+                <div
+                    className={`mt-8 flex justify-center transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ transitionDelay: '0.4s' }}
                 >
-                    <Link href="/categories">
-                        {' '}
-                        View All Categories <ChevronRight className="ml-1.5 h-4 w-4 text-orange-500" />
-                    </Link>
-                </ShadcnButton>
+                    <a
+                        href="/categories"
+                        className="inline-flex items-center rounded-full border border-gray-200 bg-white px-6 py-2.5 text-orange-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow active:scale-95 dark:border-gray-700 dark:bg-gray-800 dark:text-orange-400 dark:hover:border-orange-600 dark:hover:bg-orange-900/20 dark:hover:text-orange-300"
+                    >
+                        <span className="font-medium">View All Categories</span>
+                        <ChevronRight className="ml-1 h-4 w-4" />
+                    </a>
+                </div>
             </div>
         </div>
     );

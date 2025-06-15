@@ -1,15 +1,15 @@
-export interface CategoryItemData {
+export interface CategoryItem {
     id: number;
     name: string;
     slug: string;
     image: string;
+    description: string;
     color: string;
 }
-
-export interface CreateCategoryItemData {
+export interface CreateCategoryItem {
     name: string;
     slug: string;
-    color: string;
     image: File | null;
     description: string;
+    color: string;
 }
