@@ -2,12 +2,18 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Shop\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class,'get_home_data'])->name('home');
 
+//banner
+Route::get('dashboard/homebanner', [BannerController::class, 'index'])
+        ->name('dashboard.homebanner.index');
+Route::post('dashboard/homebanner', [BannerController::class, 'store'])
+        ->name('dashboard.homebanner.store');
 
 Route::get('/products/{slug}', [HomeController::class,'show_detail'])->name('detail');
 

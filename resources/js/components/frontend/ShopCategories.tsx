@@ -1,3 +1,5 @@
+import { Button as ShadcnButton } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { CategoryItem } from '@/types/categories';
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -12,7 +14,23 @@ export default function ShopCategories({ categories }: { categories: CategoryIte
     const [touchEnd, setTouchEnd] = useState(0);
     const carouselRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
+    // Theme classes for elements within this component
 
+    const buttonBg = 'bg-white dark:bg-slate-700';
+    const buttonBorder = 'border-gray-200 dark:border-slate-600';
+    const buttonText = 'text-gray-600 dark:text-slate-300';
+    const buttonHoverBg = 'hover:bg-gray-100 dark:hover:bg-slate-600';
+    const buttonHoverBorder = 'hover:border-gray-300 dark:hover:border-slate-500';
+    const viewAllButtonBase = 'rounded-lg border-2 font-medium transition-colors duration-300';
+    const viewAllButtonLight = 'border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white';
+    const viewAllButtonDark = 'dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-400 dark:hover:text-slate-900';
+    const viewAllCategoriesButtonBase =
+        'rounded-full border px-6 py-2.5 font-medium transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm';
+    const viewAllCategoriesButtonLight =
+        'border-gray-200 bg-white text-orange-600 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow';
+    const viewAllCategoriesButtonDark =
+        'dark:border-gray-700 dark:bg-gray-800 dark:text-orange-400 dark:hover:border-orange-600 dark:hover:bg-orange-900/20 dark:hover:text-orange-300';
+    const chevronColor = 'text-orange-600 dark:text-orange-400';
     // Animation on mount
     useEffect(() => {
         setIsVisible(true);
@@ -112,19 +130,31 @@ export default function ShopCategories({ categories }: { categories: CategoryIte
                     <div className="flex space-x-3">
                         <button
                             onClick={goToPrev}
-                            disabled={sliding}
-                            className="rounded-full border border-orange-500 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 active:scale-95 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-orange-600 dark:hover:bg-orange-900/20"
-                            aria-label="Previous categories"
+                            className={cn(
+                                'rounded-full border p-2 shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 sm:p-2.5',
+                                buttonBg,
+                                buttonBorder,
+                                buttonText,
+                                buttonHoverBg,
+                                buttonHoverBorder,
+                            )}
+                            aria-label="Previous products"
                         >
-                            <ChevronLeft className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
+                            <ChevronLeft className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5 dark:text-orange-400" />
                         </button>
                         <button
                             onClick={goToNext}
-                            disabled={sliding}
-                            className="rounded-full border border-gray-200 bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 active:scale-95 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-orange-600 dark:hover:bg-orange-900/20"
-                            aria-label="Next categories"
+                            className={cn(
+                                'rounded-full border p-2 shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 sm:p-2.5',
+                                buttonBg,
+                                buttonBorder,
+                                buttonText,
+                                buttonHoverBg,
+                                buttonHoverBorder,
+                            )}
+                            aria-label="Next products"
                         >
-                            <ChevronRight className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
+                            <ChevronRight className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5 dark:text-orange-400" />
                         </button>
                     </div>
                 </div>
@@ -206,17 +236,21 @@ export default function ShopCategories({ categories }: { categories: CategoryIte
                 </div>
 
                 {/* View All Categories Button */}
+                {/* View All Categories Button */}
                 <div
                     className={`mt-8 flex justify-center transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                     style={{ transitionDelay: '0.4s' }}
                 >
-                    <a
-                        href="/categories"
-                        className="inline-flex items-center rounded-full border border-gray-200 bg-white px-6 py-2.5 text-orange-600 shadow-sm transition-all hover:scale-105 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow active:scale-95 dark:border-gray-700 dark:bg-gray-800 dark:text-orange-400 dark:hover:border-orange-600 dark:hover:bg-orange-900/20 dark:hover:text-orange-300"
+                    <ShadcnButton
+                        asChild
+                        variant="outline"
+                        className={cn(viewAllCategoriesButtonBase, viewAllCategoriesButtonLight, viewAllCategoriesButtonDark)}
                     >
-                        <span className="font-medium">View All Categories</span>
-                        <ChevronRight className="ml-1 h-4 w-4" />
-                    </a>
+                        <Link href="/categories" className="inline-flex items-center">
+                            <span>View All Categories</span>
+                            <ChevronRight className={cn('ml-1 h-4 w-4', chevronColor)} />
+                        </Link>
+                    </ShadcnButton>
                 </div>
             </div>
         </div>

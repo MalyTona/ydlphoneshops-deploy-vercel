@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->string('image_url');
+             $table->string('imageUpload');
             $table->string('link_url');
             $table->string('alt');
             $table->boolean('is_active')->default(true);

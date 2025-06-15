@@ -396,18 +396,19 @@ export default function ProductListing() {
                 </div>
             )}
             <div className="mt-8 flex justify-center">
-                {/* This button should ideally be an Inertia Link for navigation */}
                 <ShadcnButton
                     asChild
                     variant="outline"
                     className={cn(
-                        'rounded-lg border-2 px-6 py-2 text-sm font-medium transition-colors duration-300 sm:text-base',
-                        viewAllButtonLight,
-                        viewAllButtonDark,
-                        viewAllButtonBase,
+                        'rounded-full border px-6 py-2.5 font-medium shadow-sm transition-all duration-300 hover:scale-105 active:scale-95',
+                        'border-gray-200 bg-white text-orange-600 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow',
+                        'dark:border-gray-700 dark:bg-gray-800 dark:text-orange-400 dark:hover:border-orange-600 dark:hover:bg-orange-900/20 dark:hover:text-orange-300',
                     )}
                 >
-                    <Link href="/products">View All Sales</Link>
+                    <Link href="/products" className="inline-flex items-center">
+                        <span>View All Sales</span>
+                        <ChevronRight className="ml-1 h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    </Link>
                 </ShadcnButton>
             </div>
         </div>
