@@ -1,5 +1,6 @@
-'use client';
+('use client');
 
+import { CategoryItem, CreateCategoryItem } from '@/types/categories';
 import {
     type ColumnDef,
     type ColumnFiltersState,
@@ -13,7 +14,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import { ArrowUpDown, FileDown, Pencil, Plus, RefreshCw, Search, Trash } from 'lucide-react';
-
 import * as React from 'react';
 
 import {
@@ -38,85 +38,12 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 
-import { CategoryItem, CreateCategoryItem } from '@/types/categories';
+// import { CategoryItem, CreateCategoryItem } from '@/types/categories';
 import { CompactFileInput } from '../FormInputs/ImageUpload';
 import InputError from '../input-error';
 import { Textarea } from '../ui/textarea';
 
-export type Product = {
-    id: string;
-    name: string;
-    category: string;
-    salesCount: number;
-    image: string;
-    stock: number;
-    price: number;
-    status: 'in-stock' | 'out-stock';
-};
-
-// const categories: Product[] = [
-//     {
-//         id: 'prod-001',
-//         name: 'Wireless Headphones',
-//         category: 'Electronics',
-//         salesCount: 342,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 56,
-//         price: 129.99,
-//         status: 'in-stock',
-//     },
-//     {
-//         id: 'prod-002',
-//         name: 'Smart Watch',
-//         category: 'Electronics',
-//         salesCount: 189,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 23,
-//         price: 249.99,
-//         status: 'in-stock',
-//     },
-//     {
-//         id: 'prod-003',
-//         name: 'Yoga Mat',
-//         category: 'Fitness',
-//         salesCount: 421,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 0,
-//         price: 39.99,
-//         status: 'out-stock',
-//     },
-//     {
-//         id: 'prod-004',
-//         name: 'Coffee Maker',
-//         category: 'Home',
-//         salesCount: 287,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 42,
-//         price: 89.99,
-//         status: 'in-stock',
-//     },
-//     {
-//         id: 'prod-005',
-//         name: 'Bluetooth Speaker',
-//         category: 'Electronics',
-//         salesCount: 512,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 78,
-//         price: 79.99,
-//         status: 'in-stock',
-//     },
-//     {
-//         id: 'prod-006',
-//         name: 'Fitness Tracker',
-//         category: 'Fitness',
-//         salesCount: 176,
-//         image: '/placeholder.png?height=40&width=40',
-//         stock: 0,
-//         price: 59.99,
-//         status: 'out-stock',
-//     },
-// ];
-
+// ... (your existing Product type and columns definition remain the same)
 export const columns: ColumnDef<CategoryItem>[] = [
     {
         accessorKey: 'image',
@@ -205,15 +132,7 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
         table.setPageSize(rowsPerPage);
     }, [rowsPerPage, table]);
 
-    const handleDeleteSelected = () => {
-        // In a real application, you would delete the selected rows here
-        console.log('Deleting selected products:', table.getFilteredSelectedRowModel().rows);
-        setShowDeleteDialog(false);
-        setRowSelection({});
-    };
-
     const handleExportToExcel = () => {
-        // Get visible and filtered data
         const exportData = table.getFilteredRowModel().rows.map((row) => {
             const rowData = row.original;
             return {
@@ -223,17 +142,12 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                 Image: rowData.image,
             };
         });
-
-        // Create worksheet
         const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-        // Create workbook
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
-
-        // Generate Excel file and trigger download
         XLSX.writeFile(workbook, 'products.xlsx');
     };
+
     const [images, setImages] = React.useState<File[]>([]);
     const { data, setData, processing, errors, reset } = useForm<Required<CreateCategoryItem>>({
         name: '',
@@ -243,20 +157,82 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
         description: '',
     });
 
+    // --- Start of changes ---
+
+    // 1. Add state for client-side validation errors
+    const [clientErrors, setClientErrors] = React.useState({
+        name: '',
+        color: '',
+        image: '',
+        description: '',
+    });
+
+    // 2. Create a validation function
+    const validate = () => {
+        const newErrors = {
+            name: '',
+            color: '',
+            image: '',
+            description: '',
+        };
+
+        let isValid = true;
+
+        if (!data.name) {
+            newErrors.name = 'The category name is required.';
+            isValid = false;
+        }
+        if (!data.color) {
+            newErrors.color = 'The color class is required.';
+            isValid = false;
+        }
+        if (images.length === 0) {
+            newErrors.image = 'An image is required.';
+            isValid = false;
+        }
+        if (!data.description) {
+            newErrors.description = 'The description is required.';
+            isValid = false;
+        }
+
+        setClientErrors(newErrors);
+        return isValid;
+    };
+
     const submit: React.FormEventHandler = (e) => {
         e.preventDefault();
-        data.image = images[0];
-        console.log(data);
-        router.post('/dashboard/categories', data, {
-            onFinish: () => {
+
+        // 3. Run validation before submitting
+        if (!validate()) {
+            return; // Stop submission if validation fails
+        }
+
+        // Clear client errors if validation passes
+        setClientErrors({ name: '', color: '', image: '', description: '' });
+
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('color', data.color);
+        formData.append('description', data.description || '');
+        if (images[0]) {
+            formData.append('image', images[0]);
+        }
+
+        router.post('/dashboard/categories', formData, {
+            onSuccess: () => {
                 reset();
-                toast.success('Category Successfully');
+                setImages([]);
+                setShowAddDialog(false);
+                toast.success('Category created successfully!');
+            },
+            onError: (serverErrors) => {
+                toast.error('Failed to create category. Please check the errors.');
+                // Server errors will be automatically handled by the `errors` prop from useForm
             },
         });
-        // post(route('register'), {
-        //     onFinish: () => reset('password', 'password_confirmation'),
-        // });
     };
+
+    // --- End of changes ---
 
     return (
         <Card className="w-full">
@@ -288,12 +264,14 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                                             <div className="space-y-2">
                                                 <Label htmlFor="name">Category Name</Label>
                                                 <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
-                                                <InputError message={errors.name} className="mt-2" />
+                                                {/* 4. Display client or server error */}
+                                                <InputError message={errors.name || clientErrors.name} className="mt-2" />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="category">Category Tailwind Color Class eg bg-slate-100</Label>
                                                 <Input id="category" value={data.color} onChange={(e) => setData('color', e.target.value)} />
-                                                <InputError message={errors.color} className="mt-2" />
+                                                {/* 4. Display client or server error */}
+                                                <InputError message={errors.color || clientErrors.color} className="mt-2" />
                                             </div>
                                         </div>
                                         <div className="grid w-full gap-1.5">
@@ -304,17 +282,20 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                                                 placeholder="Type your message here."
                                                 id="message"
                                             />
-                                            <InputError message={errors.description} className="mt-2" />
+                                            {/* 4. Display client or server error */}
+                                            <InputError message={errors.description || clientErrors.description} className="mt-2" />
                                         </div>
                                         <div className="mb-8">
                                             <h2 className="mb-3 text-lg font-semibold">Upload Category Image</h2>
                                             <div className="rounded border p-4">
-                                                <CompactFileInput multiple={true} maxSizeMB={1} onChange={setImages} />
+                                                <CompactFileInput multiple={false} maxSizeMB={1} onChange={setImages} />
+                                                {/* 4. Display client or server error */}
+                                                <InputError message={errors.image || clientErrors.image} className="mt-2" />
                                             </div>
                                         </div>
                                     </div>
                                     <DialogFooter>
-                                        <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                                        <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
                                             Cancel
                                         </Button>
                                         <Button disabled={processing} type="submit">
@@ -328,6 +309,7 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                 </div>
             </CardHeader>
             <CardContent>
+                {/* ... (rest of your component remains the same) ... */}
                 <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center">
                     <div className="relative flex-1">
                         <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
@@ -444,9 +426,7 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteSelected} className="bg-destructive text-destructive-foreground">
-                            Delete
-                        </AlertDialogAction>
+                        <AlertDialogAction className="bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
