@@ -198,7 +198,13 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
         setClientErrors(newErrors);
         return isValid;
     };
-
+    //handleCancel function to reset form and close dialog
+    const handleCancel = () => {
+        reset(); // Reset form data from useForm
+        setImages([]); // Reset the images state
+        setClientErrors({ name: '', color: '', image: '', description: '' }); // Clear client errors
+        setShowAddDialog(false); // Close the dialog
+    };
     const submit: React.FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -295,7 +301,8 @@ export default function CategoriesDataTable({ categories }: { categories: Catego
                                         </div>
                                     </div>
                                     <DialogFooter>
-                                        <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                                        {/* 2. Use the handleCancel function on the Cancel button */}
+                                        <Button type="button" variant="outline" onClick={handleCancel}>
                                             Cancel
                                         </Button>
                                         <Button disabled={processing} type="submit">
