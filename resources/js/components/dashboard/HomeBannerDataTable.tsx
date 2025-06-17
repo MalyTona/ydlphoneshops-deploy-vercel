@@ -107,7 +107,7 @@ export default function HomeBannerDataTable({ banners }: { banners: BannerItem[]
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Home Banners</h2>
-                        <p className="text-muted-foreground text-sm">{banners.length} items</p>
+                        <p className="text-muted-foreground text-sm">{banners.length} Mange your Shop Banner</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="icon" onClick={() => router.reload()}>
