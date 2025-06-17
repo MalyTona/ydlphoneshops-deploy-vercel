@@ -1,8 +1,8 @@
 export type BannerItem = {
     id: number;
-    title: string;
-    description: string | null;
-    link: string | null;
-    image: string;
-    status: 'active' | 'inactive';
+    image_url: string;
+    link_url: string | null;
+    alt: string;
+    is_active: boolean; // Changed from 'status'
+    sort_order: number | null;
 };

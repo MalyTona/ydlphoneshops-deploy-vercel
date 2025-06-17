@@ -1,36 +1,26 @@
 import { cn } from '@/lib/utils';
+import { BannerItem } from '@/types/banners';
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-const banners = [
-    {
-        id: 1,
-        imageUrl: '/images/YDL-BANNER.jpg',
-        linkUrl: '/anniversary-sale',
-        alt: '12 Years Jumia Anniversary Sale',
-    },
-    {
-        id: 2,
-        imageUrl: '/images/YDLBanner2.png',
-        linkUrl: '/summer-collection',
-        alt: 'Summer Collection Now Available',
-    },
-    {
-        id: 3,
-        imageUrl: '/images/banner.png',
-        linkUrl: '/tech-deals',
-        alt: 'Exclusive Tech Deals',
-    },
-];
+// --- Step 1: Define the props interface for the component ---
+interface ShopBannerProps {
+    banners: BannerItem[];
+}
 
-export default function ShopBanner() {
+// --- Step 2: Update the component to accept 'banners' as a prop ---
+const ShopBanner: React.FC<ShopBannerProps> = ({ banners }) => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
+
+    // --- Step 3: Use the passed 'banners' prop for all logic ---
     const slideCount = banners.length;
     const autoPlayDelay = 5000;
 
+    // The rest of your slider logic (goToSlide, useEffect, etc.) remains the same.
+    // It will now correctly use the dynamic 'banners' prop.
     const goToSlide = useCallback(
         (index: number) => {
             if (isAnimating) return;
@@ -51,23 +41,27 @@ export default function ShopBanner() {
         goToSlide(prevSlide);
     }, [currentSlide, goToSlide, slideCount]);
 
-    // Auto-advance slides
     useEffect(() => {
-        if (isHovering) return;
+        if (isHovering || slideCount === 0) return; // Also, stop if no slides
 
         const timer = setTimeout(goToNextSlide, autoPlayDelay);
         return () => clearTimeout(timer);
-    }, [currentSlide, isHovering, goToNextSlide]);
+    }, [currentSlide, isHovering, goToNextSlide, slideCount]);
+
+    // --- Add a check to render nothing if there are no banners ---
+    if (slideCount === 0) {
+        return null;
+    }
 
     return (
         <div className="mx-auto w-full max-w-6xl px-4 py-8">
             <div className="relative overflow-hidden rounded-lg" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
-                {/* Slides container */}
                 <div className="relative aspect-[21/9] sm:aspect-[16/9] lg:aspect-[21/9]">
+                    {/* --- Step 4: Update the mapping to use the correct property names --- */}
                     {banners.map((banner, index) => (
                         <Link
                             key={banner.id}
-                            href={banner.linkUrl}
+                            href={banner.link_url || '#'} // Use 'link_url'
                             className={`absolute inset-0 transition-all duration-500 ease-in-out ${
                                 index === currentSlide
                                     ? 'z-10 translate-x-0 opacity-100'
@@ -78,8 +72,8 @@ export default function ShopBanner() {
                         >
                             <div className="relative h-full w-full overflow-hidden">
                                 <img
-                                    src={banner.imageUrl}
-                                    alt={banner.alt}
+                                    src={`/storage/${banner.image_url}`} // Use 'image_url' and add '/storage/' prefix
+                                    alt={banner.alt} // 'alt' is correct
                                     className="h-full w-full object-contain transition-transform duration-300 hover:scale-105 sm:object-cover"
                                     loading={index === 0 ? 'eager' : 'lazy'}
                                 />
@@ -88,7 +82,7 @@ export default function ShopBanner() {
                     ))}
                 </div>
 
-                {/* Navigation arrows */}
+                {/* Navigation arrows (no changes needed here) */}
                 <button
                     onClick={goToPrevSlide}
                     disabled={isAnimating}
@@ -121,7 +115,7 @@ export default function ShopBanner() {
                     <ChevronRight className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
                 </button>
 
-                {/* Slide indicators */}
+                {/* Slide indicators (no changes needed here) */}
                 <div className="absolute right-0 bottom-4 left-0 z-20 flex justify-center gap-2">
                     {banners.map((_, index) => (
                         <button
@@ -138,4 +132,6 @@ export default function ShopBanner() {
             </div>
         </div>
     );
-}
+};
+
+export default ShopBanner;

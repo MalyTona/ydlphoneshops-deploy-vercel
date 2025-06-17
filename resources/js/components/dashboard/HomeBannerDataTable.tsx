@@ -1,89 +1,110 @@
-// File: resources/js/components/dashboard/HomeBannerDataTable.tsx
-
 'use client';
 
-// --- All your imports are correct, just make sure these are present ---
+import { BannerItem } from '@/types/banners';
+import { Link, router, useForm } from '@inertiajs/react'; // Ensure 'router' is imported
+import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { Pencil, Plus, RefreshCw, Trash } from 'lucide-react'; // Remove CheckCircle2 and XCircle if no longer used elsewhere
+import * as React from 'react';
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BannerItem } from '@/types/banners';
-import { Link, router, useForm } from '@inertiajs/react';
-import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Pencil, Plus, RefreshCw, Trash } from 'lucide-react';
-import * as React from 'react';
-import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch'; // Ensure Switch is imported
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CompactFileInput } from '../FormInputs/ImageUpload';
 import InputError from '../input-error';
-import { Textarea } from '../ui/textarea';
 
-// Your column definitions can remain the same
+// --- UPDATE: The `is_active` column definition ---
 export const columns: ColumnDef<BannerItem>[] = [
     {
         accessorKey: 'image_url',
         header: 'Image',
         cell: ({ row }) => (
             <div className="flex items-center justify-center">
-                <img
-                    src={`/storage/${row.getValue('image_url')}`}
-                    alt={row.original.title}
-                    width={80}
-                    height={40}
-                    className="rounded-md object-cover"
-                />
+                <img src={`/storage/${row.original.image_url}`} alt={row.original.alt} width={120} className="rounded-md" />
             </div>
         ),
     },
     {
-        accessorKey: 'title',
-        header: 'Title',
+        accessorKey: 'alt',
+        header: 'Alt Text',
     },
     {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'is_active',
+        header: 'Active',
+        cell: ({ row }) => {
+            const banner = row.original;
+
+            const handleToggle = (checked: boolean) => {
+                router.patch(
+                    route('dashboard.homebanner.toggle', banner.id),
+                    {},
+                    {
+                        preserveScroll: true, // Prevents page from jumping to top
+                        onSuccess: () => toast.success('Banner status updated.'),
+                        onError: () => toast.error('Failed to update status.'),
+                    },
+                );
+            };
+
+            return <Switch checked={banner.is_active} onCheckedChange={handleToggle} aria-label="Toggle banner status" />;
+        },
+    },
+    {
+        accessorKey: 'link_url',
+        header: 'Link URL',
+        cell: ({ row }) =>
+            row.original.link_url ? (
+                <a href={row.original.link_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {row.original.link_url}
+                </a>
+            ) : (
+                'N/A'
+            ),
+    },
+    {
+        accessorKey: 'sort_order',
+        header: 'Sort Order',
     },
     {
         id: 'actions',
         header: 'Actions',
-        cell: ({ row }) => {
-            const banner = row.original;
-            return (
-                <div className="flex items-center gap-2">
-                    <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                        <Link href={`#`}>
-                            {' '}
-                            {/* Placeholder for edit */}
-                            <Pencil className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-destructive h-8 w-8">
-                        <Trash className="h-4 w-4" />
-                    </Button>
-                </div>
-            );
-        },
+        cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+                <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                    <Link href={`#`}>
+                        <Pencil className="h-4 w-4" />
+                    </Link>
+                </Button>
+                <Button variant="ghost" size="icon" className="text-destructive h-8 w-8">
+                    <Trash className="h-4 w-4" />
+                </Button>
+            </div>
+        ),
     },
 ];
 
+// The rest of your component remains the same.
 export default function HomeBannerDataTable({ banners }: { banners: BannerItem[] }) {
+    // ... all of your existing code for the component ...
     const [showAddDialog, setShowAddDialog] = React.useState(false);
 
     const table = useReactTable({
         data: banners,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        // ... add other table config if needed
+        getPaginationRowModel: getPaginationRowModel(),
     });
 
-    // This form setup is now correct for a file upload
     const { data, setData, post, processing, errors, reset } = useForm({
-        title: '',
-        description: '',
-        link: '',
-        status: 'active' as 'active' | 'inactive',
-        image_url: null as File | null,
+        alt: '',
+        link_url: '',
+        is_active: true as boolean,
+        sort_order: 0,
+        image: null as File | null,
     });
 
     const submit: React.FormEventHandler = (e) => {
@@ -107,7 +128,7 @@ export default function HomeBannerDataTable({ banners }: { banners: BannerItem[]
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Home Banners</h2>
-                        <p className="text-muted-foreground text-sm">{banners.length} Mange your Shop Banner</p>
+                        <p className="text-muted-foreground text-sm">Manage your shop banners.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="icon" onClick={() => router.reload()}>
@@ -116,61 +137,59 @@ export default function HomeBannerDataTable({ banners }: { banners: BannerItem[]
                         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                             <DialogTrigger asChild>
                                 <Button className="bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Add New
+                                    <Plus className="mr-2 h-4 w-4" /> Add New
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[750px]">
+                            <DialogContent className="sm:max-w-[600px]">
                                 <form onSubmit={submit}>
                                     <DialogHeader>
-                                        <DialogTitle>Add New Home Banner</DialogTitle>
-                                        <DialogDescription>Fill in the details to add a new home banner.</DialogDescription>
+                                        <DialogTitle>Add New Banner</DialogTitle>
+                                        <DialogDescription>Fill in the details for the new banner.</DialogDescription>
                                     </DialogHeader>
-                                    <div className="grid gap-4 py-4">
+                                    <div className="grid gap-6 py-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="title">Banner Title</Label>
-                                            <Input id="title" value={data.title} onChange={(e) => setData('title', e.target.value)} />
-                                            <InputError message={errors.title} />
+                                            <Label>Banner Image</Label>
+                                            <CompactFileInput onChange={(files) => setData('image', files[0] || null)} acceptedFileTypes="image/*" />
+                                            <InputError message={errors.image} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="description">Description</Label>
-                                            <Textarea
-                                                id="description"
-                                                value={data.description}
-                                                onChange={(e) => setData('description', e.target.value)}
+                                            <Label htmlFor="alt">Alt Text</Label>
+                                            <Input
+                                                id="alt"
+                                                value={data.alt}
+                                                onChange={(e) => setData('alt', e.target.value)}
+                                                placeholder="e.g., iPhone 15 Pro promotion"
                                             />
-                                            <InputError message={errors.description} />
+                                            <InputError message={errors.alt} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="link">Link</Label>
-                                            <Input id="link" value={data.link} onChange={(e) => setData('link', e.target.value)} />
-                                            <InputError message={errors.link} />
-                                        </div>
-
-                                        {/* --- THIS IS THE FIX --- */}
-                                        {/* We replaced the text input with the file upload component */}
-                                        <div className="space-y-2">
-                                            <Label>Image</Label>
-                                            <CompactFileInput
-                                                onChange={(files) => setData('image_url', files[0] || null)}
-                                                acceptedFileTypes="image/*"
+                                            <Label htmlFor="link_url">Link URL (Optional)</Label>
+                                            <Input
+                                                id="link_url"
+                                                value={data.link_url}
+                                                onChange={(e) => setData('link_url', e.target.value)}
+                                                placeholder="e.g., /products/iphone-15"
                                             />
-                                            <InputError message={errors.image_url} />
+                                            <InputError message={errors.link_url} />
                                         </div>
-                                        {/* --- END OF FIX --- */}
-
                                         <div className="space-y-2">
-                                            <Label htmlFor="status">Status</Label>
-                                            <Select value={data.status} onValueChange={(value) => setData('status', value as 'active' | 'inactive')}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select status" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="active">Active</SelectItem>
-                                                    <SelectItem value="inactive">Inactive</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <InputError message={errors.status} />
+                                            <Label htmlFor="sort_order">Sort Order</Label>
+                                            <Input
+                                                id="sort_order"
+                                                type="number"
+                                                value={data.sort_order}
+                                                onChange={(e) => setData('sort_order', parseInt(e.target.value, 10) || 0)}
+                                            />
+                                            <InputError message={errors.sort_order} />
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <Switch
+                                                id="is_active"
+                                                checked={data.is_active}
+                                                onCheckedChange={(checked) => setData('is_active', checked)}
+                                            />
+                                            <Label htmlFor="is_active">Active</Label>
+                                            <InputError message={errors.is_active} />
                                         </div>
                                     </div>
                                     <DialogFooter>
@@ -187,7 +206,40 @@ export default function HomeBannerDataTable({ banners }: { banners: BannerItem[]
                     </div>
                 </div>
             </CardHeader>
-            <CardContent>{/* The rest of the table rendering goes here... */}</CardContent>
+            <CardContent>
+                <div className="rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        </TableHead>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                                        No results.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </CardContent>
         </Card>
     );
 }
