@@ -28,8 +28,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/products',[ProductController::class,'save_product'] )->name('dashboard.products.save');
 
 
+    // Category routes
     Route::get('/dashboard/categories',[CategoryController::class,'list_categories'] )->name('dashboard.categories.index');
     Route::post('/dashboard/categories', [CategoryController::class,'save_category'])->name('dashboard.categories.save');
+    Route::get('/dashboard/categories/{id}', [CategoryController::class,'show_category'])->name('dashboard.categories.show');
+    Route::put('/dashboard/categories/{id}', [CategoryController::class,'update_category'])->name('dashboard.categories.update');
+    Route::delete('/dashboard/categories/{id}', [CategoryController::class,'delete_category'])->name('dashboard.categories.delete');
+    Route::delete('/dashboard/categories/bulk-delete', [CategoryController::class,'bulk_delete'])->name('dashboard.categories.bulk_delete');
 });
 
 require __DIR__.'/settings.php';
